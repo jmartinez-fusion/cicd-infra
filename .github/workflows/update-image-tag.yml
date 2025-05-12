@@ -37,12 +37,15 @@ jobs:
         run: |
           git config --global user.name "jmartinez-fusion"
           git config --global user.email "jmartinez@fusionglobal.tech"
+          git remote set-url origin https://${{ secrets.PAT_PUSH }}@github.com/jmartinez-fusion/cicd-infra.git
+
+      - name: Check git remote
+        run: git remote -v
 
       - name: Commit and push changes
         run: |
           git add .
           git commit -m "Update image tag to $TAG"
-          git remote set-url origin https://${{ secrets.PAT_PUSH }}@github.com/jmartinez-fusion/cicd-infra.git
           git remote -v
           git push
 
