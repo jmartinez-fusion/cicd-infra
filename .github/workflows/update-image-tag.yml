@@ -16,9 +16,13 @@ jobs:
 
       - name: Install correct yq (Go version)
         run: |
-          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-          chmod +x /usr/bin/yq
-          yq --version
+          mkdir -p $HOME/bin
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O $HOME/bin/yq
+          chmod +x $HOME/bin/yq
+          echo "$HOME/bin" >> $GITHUB_PATH  # agrega a $PATH
+
+      - name: Confirm yq version
+        run: yq --version
 
       - name: Replace image tag using yq
         run: |
