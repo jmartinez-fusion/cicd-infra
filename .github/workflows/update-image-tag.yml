@@ -23,9 +23,6 @@ jobs:
           yq e '.spec.template.spec.containers[0].image = "tu_usuario/simple-docker-app:'"$TAG"'"' -i deployment.yaml
           git diff deployment.yaml
  
-      - name: Check if image line is present
-        run: grep "image: tu_usuario/simple-docker-app:" deployment.yaml || echo "Image line not found!"
-
       - name: View deployment.yaml
         run: cat deployment.yaml
 
