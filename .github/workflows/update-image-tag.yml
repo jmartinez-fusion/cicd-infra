@@ -20,7 +20,7 @@ jobs:
       - name: Replace image tag using yq
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
-          yq e '.spec.template.spec.containers[0].image = "tu_usuario/simple-docker-app:'"$TAG"'"' -i deployment.yaml
+          yq e '.spec.template.spec.containers[0].image = "jmartinezfusion/app-python:'"$TAG"'"' -i deployment.yaml
           git diff deployment.yaml
  
       - name: View deployment.yaml
