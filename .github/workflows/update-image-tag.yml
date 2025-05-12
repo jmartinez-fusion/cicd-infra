@@ -14,8 +14,11 @@ jobs:
       - name: List files after checkout
         run: ls -la
 
-      - name: Install yq
-        run: sudo apt-get install -y yq
+      - name: Install correct yq (Go version)
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          chmod +x /usr/bin/yq
+          yq --version
 
       - name: Replace image tag using yq
         run: |
