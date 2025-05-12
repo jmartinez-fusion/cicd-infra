@@ -18,7 +18,10 @@ jobs:
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
           sed -i "s|\(image: jmartinezfusion/app-pyton:\).*|\1$TAG|" deployment.yaml
-    
+   
+      - name: View deployment.yaml
+        run: cat deployment.yaml
+
       - name: Set up Git credentials
         run: |
           git config --global user.name "github-actions"
