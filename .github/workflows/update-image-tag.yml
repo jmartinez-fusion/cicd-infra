@@ -14,11 +14,18 @@ jobs:
       - name: List files after checkout
         run: ls -la
 
-      - name: Replace image tag
+      - name: Install yq
+        run: sudo apt-get install -y yq
+
+      - name: Replace image tag using yq
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
-          sed -i "s|\(image: jmartinezfusion/app-pyton:\).*|\1$TAG|" deployment.yaml
-   
+          yq e '.spec.template.spec.containers[0].image = "tu_usuario/simple-docker-app:'"$TAG"'"' -i deployment.yaml
+          git diff deployment.yaml
+ 
+      - name: Check if image line is present
+        run: grep "image: tu_usuario/simple-docker-app:" deployment.yaml || echo "Image line not found!"
+
       - name: View deployment.yaml
         run: cat deployment.yaml
 
