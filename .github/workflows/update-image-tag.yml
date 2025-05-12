@@ -1,0 +1,25 @@
+name: Update K8s Image Tag
+
+on:
+  repository_dispatch:
+    types: [update-k8s-deployment]
+
+jobs:
+  update-image-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout infra repo
+        uses: actions/checkout@v3
+
+      - name: Replace image tag
+        run: |
+          TAG=${{ github.event.client_payload.image_tag }}
+          sed -i "s|\(image: jmartinezfusion/app-pyton:\).*|\1$TAG|" deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git commit -am "Update image tag to $TAG"
+          git push
+
