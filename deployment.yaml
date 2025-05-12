@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: app-python
-          image: jmartinezfusion/app-python:02832e
+          image: jmartinezfusion/app-python:bb4969
           ports:
             - containerPort: 5000
