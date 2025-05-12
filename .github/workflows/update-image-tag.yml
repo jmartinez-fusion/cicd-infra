@@ -32,24 +32,14 @@ jobs:
  
       - name: View deployment.yaml
         run: cat deployment.yaml
-
-      - name: Set up Git credentials
+    
+      - name: Commit files
         run: |
-          git config --global user.name "jmartinez-fusion"
-          git config --global user.email "jmartinez@fusionglobal.tech"
-          git remote set-url origin https://${{ secrets.PAT_PUSH }}@github.com/jmartinez-fusion/cicd-infra.git
-
-      - name: Check git remote
-        run: git remote -v
-
-      - name: Commit changes
-        run: |
-          git add .
-          git commit -m "Update image tag to $TAG"
-          git remote -v
-      
+          git config --local user.email "jmartinez@fusionglobal.tech"
+          git config --local user.name "jmartinez-fusion"
+          git commit -a -m "Add changes"
       - name: Push changes
         uses: ad-m/github-push-action@master
-          with:
-            github_token: ${{ secrets.PAT_PUSH }}
-            branch: ${{ github.ref }}
+        with:
+          github_token: ${{ secrets.PAT_PUSH }}
+          branch: ${{ github.ref }}
