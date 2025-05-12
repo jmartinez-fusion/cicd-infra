@@ -11,11 +11,20 @@ jobs:
       - name: Checkout infra repo
         uses: actions/checkout@v3
 
+      - name: List files after checkout
+        run: ls -la
+
       - name: Replace image tag
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
           sed -i "s|\(image: jmartinezfusion/app-pyton:\).*|\1$TAG|" deployment.yaml
 
+      - name: Debug: Check if file changed
+        run: git diff deployment.yaml
+
+      - name: Debug: Show updated file
+        run: cat deployment.yaml
+    
       - name: Set up Git credentials
         run: |
           git config --global user.name "github-actions"
