@@ -24,6 +24,31 @@ jobs:
       - name: Confirm yq version
         run: yq --version
 
+      - name: Install kubeseal
+        uses: digitalservicebund/setup-kubeseal@LATEST_HASH
+
+      - name: Create Kubernetes Secret
+        run: |
+          echo "
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: my-secret
+            namespace: default
+          type: Opaque
+          data:
+            username: $(echo -n 'admin' | base64)
+            password: $(echo -n 's3cr3t' | base64)
+          " > my-secret.yaml
+
+      - name: Seal the secret
+        run: |
+          kubeseal --format yaml --cert ${{ secrets.CERT_KUBESEAL }} < my-secret.yaml > sealed-secret.yaml
+
+      - name: View sealed secret
+        run: |
+          cat sealed-secrets.yaml | kubeseal --validate
+
       - name: Replace image tag using yq
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
