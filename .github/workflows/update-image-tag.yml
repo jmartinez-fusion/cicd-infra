@@ -33,18 +33,28 @@ jobs:
           sudo mv kubeseal /usr/local/bin/
 
       - name: Create Kubernetes Secret
-        run: |
-          echo "
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: my-secret
-            namespace: demo
-          type: Opaque
-          data:
-            username: $(echo -n ${{ secrets.USER }} | base64)
-            password: $(echo -n ${{ secrets.PASSWORD }} | base64)
-          " > my-secret.yaml
+        # run: |
+        #   echo "
+        #   apiVersion: v1
+        #   kind: Secret
+        #   metadata:
+        #     name: my-secret
+        #     namespace: demo
+        #   type: Opaque
+        #   data:
+        #     username: $(echo -n ${{ secrets.USER }} | base64)
+        #     password: $(echo -n ${{ secrets.PASSWORD }} | base64)
+        #   " > my-secret.yaml
+        uses: jmartinez-fusion/create-k8s-secret@main
+        with:
+          secret_name: my_secret
+          namespace: demo
+          data_json: |
+            {
+              "username": "${{ secrets.USER }}",
+              "password": "${{ secrets.PASSWORD }}",
+              "apiKey": "la famosa api key"
+            }
       
       - name: Create cert.pem
         run: |
