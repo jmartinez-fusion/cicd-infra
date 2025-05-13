@@ -28,6 +28,7 @@ jobs:
         run: |
           wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.24.5/kubeseal-0.24.5-linux-amd64.tar.gz
           tar -xvzf kubeseal-0.24.5-linux-amd64.tar.gz kubeseal
+          rm kubeseal-0.24.5-linux-amd64.tar.gz
           chmod +x kubeseal
           sudo mv kubeseal /usr/local/bin/
 
@@ -41,8 +42,8 @@ jobs:
             namespace: demo
           type: Opaque
           data:
-            username: $(echo -n 'admin' | base64)
-            password: $(echo -n 's3cr3t' | base64)
+            username: $(echo -n ${{ secrets.USER }} | base64)
+            password: $(echo -n ${{ secrets.PASSWORD }} | base64)
           " > my-secret.yaml
       
       - name: Create cert.pem
@@ -59,8 +60,8 @@ jobs:
         run: |
           kubeseal --format yaml --cert cert.pem < my-secret.yaml > sealed-secret.yaml
 
-      - name: Remove secret
-        run: rm my-secret.yaml
+      - name: Remove secret and cert
+        run: rm my-secret.yaml cert.pem
 
       - name: List files
         run: ls -la
