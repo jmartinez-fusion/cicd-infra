@@ -46,10 +46,14 @@ jobs:
           " > my-secret.yaml
       
       - name: Create cert.pem
-        run: echo -e ${{ secrets.CERT_KUBESEAL }} > cert.pem
+        run: |
+          echo "${{ secrets.SEALED_CERT }}" | sed 's/\\n/\n/g' > cert.pem
 
       - name: View cert.pem
         run: cat cert.pem
+
+      - name: Verificar formato
+        run: head cert.pem
 
       - name: Seal the secret
         run: |
