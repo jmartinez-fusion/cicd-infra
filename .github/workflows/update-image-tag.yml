@@ -59,9 +59,11 @@ jobs:
         run: |
           kubeseal --format yaml --cert cert.pem < my-secret.yaml > sealed-secret.yaml
 
-      - name: View sealed secret
-        run: |
-          cat sealed-secrets.yaml | kubeseal --validate
+      - name: Remove secret
+        run: rm my-secret.yaml
+
+      - name: List files
+        run: ls -la
 
       - name: Replace image tag using yq
         run: |
@@ -76,6 +78,7 @@ jobs:
         run: |
           git config --local user.email "jmartinez@fusionglobal.tech"
           git config --local user.name "jmartinez-fusion"
+          git add .
           git commit -a -m "Add changes"
       - name: Push changes
         uses: ad-m/github-push-action@master
