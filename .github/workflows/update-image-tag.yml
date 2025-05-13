@@ -25,9 +25,11 @@ jobs:
         run: yq --version
 
       - name: Install kubeseal
-        uses: digitalservicebund/setup-kubeseal@LATEST_HASH
-        with:
-          version: v0.29.0
+        run: |
+          wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.24.5/kubeseal-0.24.5-linux-amd64.tar.gz
+          tar -xvzf kubeseal-0.24.5-linux-amd64.tar.gz kubeseal
+          chmod +x kubeseal
+          sudo mv kubeseal /usr/local/bin/
 
       - name: Create Kubernetes Secret
         run: |
