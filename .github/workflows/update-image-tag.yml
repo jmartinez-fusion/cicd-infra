@@ -34,7 +34,7 @@ jobs:
           kind: Secret
           metadata:
             name: my-secret
-            namespace: default
+            namespace: demo
           type: Opaque
           data:
             username: $(echo -n 'admin' | base64)
