@@ -44,10 +44,16 @@ jobs:
             username: $(echo -n 'admin' | base64)
             password: $(echo -n 's3cr3t' | base64)
           " > my-secret.yaml
+      
+      - name: Create cert.pem
+        run: echo -e ${{ secrets.CERT_KUBESEAL }} > cert.pem
+
+      - name: View cert.pem
+        run: cat cert.pem
 
       - name: Seal the secret
         run: |
-          kubeseal --format yaml --cert ${{ secrets.CERT_KUBESEAL }} < my-secret.yaml > sealed-secret.yaml
+          kubeseal --format yaml --cert cert.pem < my-secret.yaml > sealed-secret.yaml
 
       - name: View sealed secret
         run: |
