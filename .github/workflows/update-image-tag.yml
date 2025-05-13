@@ -26,6 +26,8 @@ jobs:
 
       - name: Install kubeseal
         uses: digitalservicebund/setup-kubeseal@LATEST_HASH
+        with:
+          version: v0.29.0
 
       - name: Create Kubernetes Secret
         run: |
