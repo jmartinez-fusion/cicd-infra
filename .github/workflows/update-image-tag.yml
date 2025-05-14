@@ -11,10 +11,7 @@ jobs:
       - name: Checkout infra repo
         uses: actions/checkout@v3
 
-      - name: List files after checkout
-        run: ls -la
-
-      - name: Install correct yq (Go version)
+      - name: Install yq (GO version)
         run: |
           mkdir -p $HOME/bin
           wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O $HOME/bin/yq
@@ -33,38 +30,22 @@ jobs:
           sudo mv kubeseal /usr/local/bin/
 
       - name: Create Kubernetes Secret
-        # run: |
-        #   echo "
-        #   apiVersion: v1
-        #   kind: Secret
-        #   metadata:
-        #     name: my-secret
-        #     namespace: demo
-        #   type: Opaque
-        #   data:
-        #     username: $(echo -n ${{ secrets.USER }} | base64)
-        #     password: $(echo -n ${{ secrets.PASSWORD }} | base64)
-        #   " > my-secret.yaml
-        uses: jmartinez-fusion/create-k8s-secret@main
-        with:
-          secret_name: my_secret
-          namespace: demo
-          data_json: |
-            {
-              "username": "${{ secrets.USER }}",
-              "password": "${{ secrets.PASSWORD }}",
-              "apiKey": "la famosa api key"
-            }
+        run: |
+          echo "
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: my-secret
+            namespace: demo
+          type: Opaque
+          data:
+            username: $(echo -n ${{ secrets.USER }} | base64)
+            password: $(echo -n ${{ secrets.PASSWORD }} | base64)
+          " > my-secret.yaml
       
       - name: Create cert.pem
         run: |
           echo "${{ secrets.CERT_KUBESEAL }}" | sed 's/\\n/\n/g' > cert.pem
-
-      - name: View cert.pem
-        run: cat cert.pem
-
-      - name: Verificar formato
-        run: head cert.pem
 
       - name: Seal the secret
         run: |
@@ -73,17 +54,11 @@ jobs:
       - name: Remove secret and cert
         run: rm my-secret.yaml cert.pem
 
-      - name: List files
-        run: ls -la
-
       - name: Replace image tag using yq
         run: |
           TAG=${{ github.event.client_payload.image_tag }}
           yq e '.spec.template.spec.containers[0].image = "jmartinezfusion/app-python:'"$TAG"'"' -i deployment.yaml
           git diff deployment.yaml
- 
-      - name: View deployment.yaml
-        run: cat deployment.yaml
     
       - name: Commit files
         run: |
@@ -91,6 +66,7 @@ jobs:
           git config --local user.name "jmartinez-fusion"
           git add .
           git commit -a -m "Add changes"
+          
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
